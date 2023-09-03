@@ -97,7 +97,7 @@ for i in playerdb:
     
     else :
         test_str = str(i.winStreak) + "연승"
-    raw_data[i.name] = [i.name, i.mod, i.win+i.lose, i.win, i.lose, "100%", i.rating, test_str]
+    raw_data[i.name] = [i.name, i.mod, i.win+i.lose, i.win, i.lose, round(float(i.win) /float(i.win+i.lose),2), i.rating, test_str]
 
 data = pd.DataFrame(raw_data,index=['아이디', '','경기' ,'승','패', '승률','MMR', '비고'])
 data = data.transpose()
@@ -110,7 +110,6 @@ for id, prev in prevRank.items():
         continue
     now = int(x[0]) + 1
     
-    print(str(prev),str(now))
     mode = int(prev) - int(now)
     if mode > 0 :
         mod_str = "▲"+str(mode)
@@ -129,4 +128,19 @@ print(data)
 
 worksheet.update('C2',[data.columns.values.tolist()] + data.values.tolist())
 
+worksheet = sh.worksheet('경기 순')
+data = data.sort_values('경기', ascending=False)
+worksheet.update('C2',[data.columns.values.tolist()] + data.values.tolist())
+
+worksheet = sh.worksheet('승리 순')
+data = data.sort_values('승', ascending=False)
+worksheet.update('C2',[data.columns.values.tolist()] + data.values.tolist())
+
+worksheet = sh.worksheet('패배 순')
+data = data.sort_values('패', ascending=False)
+worksheet.update('C2',[data.columns.values.tolist()] + data.values.tolist())
+
+worksheet = sh.worksheet('승률 순')
+data = data.sort_values('승률', ascending=False)
+worksheet.update('C2',[data.columns.values.tolist()] + data.values.tolist())
 f.close()
